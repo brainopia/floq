@@ -1,0 +1,2 @@
+class Floq::Scheduler
+end
