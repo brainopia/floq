@@ -1,6 +1,10 @@
-class Floq::Queue::Singular < Flow::Queue
+class Floq::Queue::Singular < Floq::Queue
   def pull
-    yield peek
-    skip
+    message = peek
+    if message
+      yield message
+      skip
+      message
+    end
   end
 end

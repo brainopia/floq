@@ -18,7 +18,7 @@ class Floq::Queue
 
   def peek
     message = provider.peek name
-    decode message
+    decode message if message
   end
 
   def push(message)

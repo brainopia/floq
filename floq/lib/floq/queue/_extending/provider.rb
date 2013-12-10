@@ -1,4 +1,4 @@
-class Flow::Queue
+class Floq::Queue
   def self.delegate_provider(*methods)
     methods.each do |method|
       class_eval <<-CODE
@@ -12,6 +12,6 @@ class Flow::Queue
   private
 
   def provider
-    Flow.provider
+    Floq.provider
   end
 end

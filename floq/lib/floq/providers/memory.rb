@@ -1,4 +1,6 @@
 module Floq::Providers::Memory
+  extend self
+
   MESSAGES = Hash.new {|hash, key| hash[key] = [] }
   OFFSETS  = Hash.new 0
 
@@ -15,7 +17,7 @@ module Floq::Providers::Memory
     OFFSETS.delete queue
   end
 
-  def skip
+  def skip(queue)
     OFFSETS[queue] += 1
   end
 
