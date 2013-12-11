@@ -1,7 +1,7 @@
 class Floq
   require_relative 'floq/serializer'
   require_relative 'floq/queue'
-  require_relative 'floq/scheduler'
+  require_relative 'floq/schedulers'
   require_relative 'floq/providers'
 
   QUEUES = {}
