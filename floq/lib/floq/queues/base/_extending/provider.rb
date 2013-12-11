@@ -1,4 +1,4 @@
-class Floq::Queue
+class Floq::Queues::Base
   def self.delegate_provider(*methods)
     methods.each do |method|
       class_eval <<-CODE

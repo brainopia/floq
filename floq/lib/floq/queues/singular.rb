@@ -1,4 +1,4 @@
-class Floq::Queue::Singular < Floq::Queue
+class Floq::Queues::Singular < Floq::Queues::Base
   def pull
     message = peek
     if message

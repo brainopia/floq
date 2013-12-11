@@ -1,7 +1,7 @@
-class Floq::Base
+class Floq::Schedulers::Base
   attr_reader :queues
 
-  def initialize(*queues)
+  def initialize(queues)
     @queues = queues
     check_handler
   end

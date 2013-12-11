@@ -1,6 +1,6 @@
 class Floq
   require_relative 'floq/serializer'
-  require_relative 'floq/queue'
+  require_relative 'floq/queues'
   require_relative 'floq/schedulers'
   require_relative 'floq/providers'
 
@@ -10,7 +10,7 @@ class Floq
     attr_accessor :provider
 
     def [](name)
-      QUEUES[name] ||= Queue.new name
+      QUEUES[name] ||= Queues::Parallel.new name
     end
 
     def queues

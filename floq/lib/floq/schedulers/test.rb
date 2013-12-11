@@ -6,8 +6,8 @@ class Floq::Schedulers::Test < Floq::Schedulers::Base
     @pushed = []
     scheduler = self
     queues.each do |queue|
-      queue.define_singleton_method :push do |*|
-        super
+      queue.define_singleton_method :push do |data|
+        super data
         scheduler.pushed << self
       end
     end

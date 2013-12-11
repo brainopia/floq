@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Floq::Queue do
+describe Floq::Queues do
   let(:name)     { :test_queue }
   let(:message)  {{ foo: :bar }}
   let(:messages) { Floq::Providers::Memory::MESSAGES }
@@ -52,7 +52,7 @@ describe Floq::Queue do
   end
 
   context 'singular queue' do
-    let(:queue) { Floq::Queue::Singular.new name }
+    let(:queue) { Floq::Queues::Singular.new name }
     it_should_behave_like :queue
   end
 end
