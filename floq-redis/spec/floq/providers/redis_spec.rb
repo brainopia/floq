@@ -36,6 +36,11 @@ describe Floq::Providers::Redis do
       subject.push(queue, 'foobar')
       subject.peek(queue).should == 'foobar'
     end
+
+    it 'peek_and_skip' do
+      subject.peek_and_skip(queue).should == [nil, 0]
+      subject.offset(queue).should == 0
+    end
   end
 
   context 'filled' do
@@ -43,12 +48,12 @@ describe Floq::Providers::Redis do
 
     before do
       prefill.times do |i|
-        subject.push queue, i
+        subject.push queue, "message_#{i}"
       end
     end
 
     it 'peek' do
-      subject.peek(queue).should == '0'
+      subject.peek(queue).should == 'message_0'
       subject.offset(queue).should == 0
     end
 
@@ -58,7 +63,7 @@ describe Floq::Providers::Redis do
 
     it 'skip' do
       subject.skip queue
-      subject.peek(queue).should == '1'
+      subject.peek(queue).should == 'message_1'
       subject.offset(queue).should == 1
     end
 
@@ -66,6 +71,18 @@ describe Floq::Providers::Redis do
       subject.skip_all queue
       subject.peek(queue).should be_nil
       subject.offset(queue).should == prefill
+    end
+
+    it 'confirm' do
+      subject.confirm(queue, 1)
+      confirm_key = subject.send(:confirm_key, queue)
+      subject.send(:client).lindex(confirm_key, 0).should == '1'
+    end
+
+    it 'peek_and_skip' do
+      subject.skip queue
+      subject.peek_and_skip(queue).should == ['message_1', 1]
+      subject.offset(queue).should == 2
     end
   end
 end
