@@ -35,7 +35,7 @@ module Floq::Providers::Memory
   end
 
   def peek_and_skip(queue)
-    peek(queue).tap { skip }
+    peek(queue).tap { skip queue }
   end
 
   def confirm(queue, offset)
