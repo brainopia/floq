@@ -1,6 +1,9 @@
-class Floq::Queues::Base
+class Floq::Queue
+  require_relative 'queue/_extending/provider'
+  require_relative 'queue/parallel'
+  require_relative 'queue/singular'
+
   include Floq::Serializer
-  require_relative 'base/_extending/provider'
 
   attr_reader :name, :handler
   delegate_provider :drop, :skip, :skip_all, :offset, :total

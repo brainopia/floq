@@ -3,6 +3,7 @@ module Floq::Providers::Memory
 
   MESSAGES = Hash.new {|hash, key| hash[key] = [] }
   OFFSETS  = Hash.new 0
+  CONFIRMS = MESSAGES.dup
 
   def peek(queue)
     MESSAGES[queue][offset queue]
@@ -31,5 +32,13 @@ module Floq::Providers::Memory
 
   def total(queue)
     MESSAGES[queue].length
+  end
+
+  def peek_and_skip(queue)
+    peek(queue).tap { skip }
+  end
+
+  def confirm(queue, offset)
+    CONFIRMS[queue] << offset
   end
 end
