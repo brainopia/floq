@@ -6,6 +6,7 @@ class Floq::Queues::Base
   delegate_provider :drop, :skip, :skip_all, :offset, :total
 
   def initialize(name)
+    raise ArgumentError, name unless name
     @name = "floq-#{name}"
   end
 
