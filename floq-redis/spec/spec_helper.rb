@@ -1,1 +1,1 @@
-require 'floq/providers/redis'
+require 'floq/redis'
