@@ -9,8 +9,8 @@ class Floq
   class << self
     attr_accessor :provider
 
-    def [](name)
-      QUEUES[name] ||= Queues::Parallel.new name
+    def [](name, type=:parallel)
+      QUEUES[name] ||= Queues.const_get(type.capitalize).new name
     end
 
     def queues
