@@ -4,6 +4,10 @@ class Floq::Schedulers::Test < Floq::Schedulers::Base
   def initialize(*)
     super
     @pushed = []
+  end
+
+  def add(queues)
+    super
     scheduler = self
     queues.each do |queue|
       queue.define_singleton_method :push do |data|
