@@ -1,7 +1,7 @@
 class Floq::Schedulers::Base
   attr_reader :queues
 
-  def initialize(queues)
+  def initialize(queues=[])
     @queues = []
     add queues
   end
