@@ -7,7 +7,6 @@ class Floq::Schedulers::Base
   end
 
   def add(queues)
-    check_handler queues
     @queues.concat queues
   end
 

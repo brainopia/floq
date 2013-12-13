@@ -23,6 +23,7 @@ class Floq::Schedulers::Test < Floq::Schedulers::Base
   end
 
   def run
+    check_handlers queues
     while queue = pushed.shift
       queue.pull_and_handle
     end
