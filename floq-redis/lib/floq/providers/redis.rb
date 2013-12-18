@@ -59,6 +59,10 @@ module Floq::Providers::Redis
     client.rpush confirm_key(queue), offset
   end
 
+  def all(queue)
+    client.lrange queue, 0, -1
+  end
+
   private
 
   def offset_key(queue)

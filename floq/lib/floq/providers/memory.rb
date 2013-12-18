@@ -43,4 +43,8 @@ module Floq::Providers::Memory
   def confirm(queue, offset)
     CONFIRMS[queue] << offset
   end
+
+  def all(name)
+    MESSAGES[name]
+  end
 end
