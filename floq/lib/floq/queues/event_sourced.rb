@@ -5,7 +5,8 @@ class Floq::Queues::EventSourced < Floq::Queues::Base
 
   def peek
     events = provider.all name
-    events.reduce {|total, event| total.merge event }
+    merged = events.reduce {|total, event| total.merge event }
+    merged.delete_if {|_, value| value.nil? }
   end
 
   def skip
