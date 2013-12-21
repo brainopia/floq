@@ -1,18 +1,18 @@
 class Floq::Schedulers::Base
-  attr_reader :queues
+  attr_reader :options, :queues
 
-  def initialize(queues=[])
-    @queues = []
-    add queues
+  def initialize(options={})
+    @options = options
+    @queues  = options.delete(:queues) { [] }
   end
 
-  def add(queues)
-    @queues.concat queues
+  def run
+    loop { pull_and_handle }
   end
 
   private
 
-  def check_handler(queues)
+  def check_handler
     without_handler = queues.reject(&:handler)
     unless without_handler.empty?
       raise ArgumentError, "Missing handler for #{without_handler}"

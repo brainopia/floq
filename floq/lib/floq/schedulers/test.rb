@@ -1,31 +1,37 @@
 class Floq::Schedulers::Test < Floq::Schedulers::Base
-  attr_reader :pushed
+  attr_reader :testable_queues, :pushed_queues
 
   def initialize(*)
     super
-    @pushed = []
+    @testable_queues = []
+    @pushed_queues   = []
   end
 
-  def add(queues)
-    super
+  def drop
+    pushed_queues.uniq.each(&:drop)
+    pushed_queues.clear
+  end
+
+  def run
+    check_handler
+    make_queues_testable
+    
+    while queue = pushed_queues.shift
+      queue.pull_and_handle
+    end
+  end
+
+  private
+
+  def make_queues_testable
     scheduler = self
     queues.each do |queue|
       queue.define_singleton_method :push do |data|
         super data
-        scheduler.pushed << self
+        scheduler.pushed_queues << self
       end
     end
-  end
-
-  def drop
-    pushed.uniq.each(&:drop)
-    pushed.clear
-  end
-
-  def run
-    check_handler queues
-    while queue = pushed.shift
-      queue.pull_and_handle
-    end
+    testable_queues.concat queues
+    queues.clear
   end
 end
