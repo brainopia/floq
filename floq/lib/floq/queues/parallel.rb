@@ -1,8 +1,25 @@
 class Floq::Queues::Parallel < Floq::Queues::Base
+  FAIL_TIMEOUT = 1
+
   def pull
+    if @failed
+      if Time.now - @failed <= FAIL_TIMEOUT
+        return
+      else
+        @failed = nil
+      end
+    end
+
     message, offset = peek_and_skip
-    yield message
-    confirm offset
+    if message
+      begin
+        yield message
+        confirm offset
+        message
+      rescue
+        @failed_at = Time.now
+      end
+    end
   end
 
   def confirm(offset)
