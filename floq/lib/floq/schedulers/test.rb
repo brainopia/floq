@@ -1,10 +1,10 @@
 class Floq::Schedulers::Test < Floq::Schedulers::Base
-  attr_reader :testable_queues, :pushed_queues
+  attr_reader :pushed_queues
 
   def initialize(*)
     super
-    @testable_queues = []
-    @pushed_queues   = []
+    make_queues_testable
+    @pushed_queues = []
   end
 
   def drop
@@ -14,7 +14,6 @@ class Floq::Schedulers::Test < Floq::Schedulers::Base
 
   def run
     check_handler
-    make_queues_testable
     
     while queue = pushed_queues.shift
       queue.pull_and_handle
@@ -31,7 +30,5 @@ class Floq::Schedulers::Test < Floq::Schedulers::Base
         scheduler.pushed_queues << self
       end
     end
-    testable_queues.concat queues
-    queues.clear
   end
 end

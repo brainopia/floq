@@ -4,7 +4,7 @@ describe Floq::Schedulers::Test do
   let(:mail) { Hash.new {|hash,key| hash[key] = [] }}
   let(:queues) { queues_for *queue_names }
   let(:queue_names) { [:queue_1, :queue_2] }
-  subject { described_class.new queues }
+  subject { described_class.new queues: queues }
 
   before { subject.drop }
 
