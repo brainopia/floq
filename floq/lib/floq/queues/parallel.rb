@@ -1,6 +1,8 @@
 class Floq::Queues::Parallel < Floq::Queues::Base
   FAIL_TIMEOUT = 1
 
+  delegate_provider :confirmed_offset
+
   def pull
     if @failed
       if Time.now - @failed <= FAIL_TIMEOUT

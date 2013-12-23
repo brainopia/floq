@@ -30,6 +30,10 @@ module Floq::Providers::Memory
     OFFSETS[queue]
   end
 
+  def offset!(queue, value)
+    OFFSETS[queue] = value
+  end
+
   def total(queue)
     MESSAGES[queue].length
   end
@@ -42,6 +46,10 @@ module Floq::Providers::Memory
 
   def confirm(queue, offset)
     CONFIRMS[queue] << offset
+  end
+
+  def confirmed_offset(queue)
+    CONFIRMS[queue].min
   end
 
   def all(name)

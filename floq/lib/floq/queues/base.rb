@@ -10,6 +10,9 @@ class Floq::Queues::Base
     @name = "floq-#{name}"
   end
 
+  def start
+  end
+
   def count
     total - offset
   end
@@ -17,6 +20,10 @@ class Floq::Queues::Base
   def peek
     message = provider.peek name
     decode message if message
+  end
+
+  def offset!(value)
+    provider.offset! name, value
   end
 
   def push(message)

@@ -35,6 +35,10 @@ module Floq::Providers::Redis
     client.get(offset_key queue).to_i
   end
 
+  def offset!(queue, value)
+    client.set offset_key(queue), value
+  end
+
   def total(queue)
     client.llen queue
   end
@@ -57,6 +61,10 @@ module Floq::Providers::Redis
 
   def confirm(queue, offset)
     client.rpush confirm_key(queue), offset
+  end
+
+  def confirmed_offset(queue)
+    client.lrange(confirm_key(queue), 0, -1).map(&:to_i).min
   end
 
   def all(queue)
