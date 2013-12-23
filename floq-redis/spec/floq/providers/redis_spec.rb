@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Floq::Providers::Redis do
   let(:queue) { :test_queue }
-  subject { described_class }
 
   before do
     subject.drop queue

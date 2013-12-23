@@ -1,10 +1,10 @@
 require 'floq'
 require 'redis'
 
-module Floq::Providers::Redis
-  extend self
-
-  Floq.provider = self
+class Floq::Providers::Redis
+  def initialize(settings={})
+    @settings = settings
+  end
 
   def peek(queue)
     client.lindex queue, offset(queue)
@@ -82,6 +82,6 @@ module Floq::Providers::Redis
   end
 
   def client
-    Thread.current[:floq_redis] ||= Redis.new
+    Thread.current[:floq_redis] ||= Redis.new @settings
   end
 end
