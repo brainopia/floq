@@ -14,4 +14,7 @@ class Floq::Web < Sinatra::Base
     @queue = Floq[params[:name]]
     erb :queue
   end
+
+  delete '/queue/:name' do
+  end
 end
