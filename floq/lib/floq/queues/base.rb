@@ -2,12 +2,13 @@ class Floq::Queues::Base
   include Floq::Serializer
   require_relative 'base/_extending/provider'
 
-  attr_reader :name, :handler
+  attr_reader :label, :name, :handler
   delegate_provider :drop, :skip, :skip_all, :offset, :total
 
-  def initialize(name)
-    raise ArgumentError, name unless name
-    @name = "floq-#{name}"
+  def initialize(label)
+    raise ArgumentError, label unless label
+    @label = label
+    @name  = "floq-#{label}"
   end
 
   def start
