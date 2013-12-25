@@ -9,4 +9,9 @@ class Floq::Web < Sinatra::Base
   get '/' do
     erb :index
   end
+
+  get '/queue/:name' do
+    @queue = Floq[params[:name]]
+    erb :queue
+  end
 end

@@ -1,21 +1,16 @@
-<head>
-  <link href="semantic/css/semantic.min.css" rel="stylesheet" type="text/css">
-</head>
-<body>
-  <table class="ui table segment">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Count</th>
-      </tr>
-    </thead>
-    <tbody>
-    <% Floq::Web.queues.each do |queue| %>
-      <tr>
-        <td><%= queue.name %></td>
-        <td><%= queue.count %></td>
-      </tr>
-    <% end %>
-    </tbody>
-  </table>
-</body>
+<table class="ui table segment">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Count</th>
+    </tr>
+  </thead>
+  <tbody>
+  <% Floq::Web.queues.each do |queue| %>
+    <tr>
+      <td><%= queue.label %></td>
+      <td><%= queue.count %></td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
