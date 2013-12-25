@@ -7,19 +7,19 @@
     </tr>
   </thead>
   <tbody>
-  <% Floq::Web.queues.each do |queue| %>
+  <% queues.each do |queue| %>
     <tr>
       <td>
-        <a link="/queue/<%= queue.label %>">
+        <a href="/queue/<%= queue.label %>">
           <%= queue.label %>
         </a>
       </td>
       <td>
         <%= queue.count %>
       </td>
-      <th>
+      <td>
         <%= queue.offset %>
-      </th>
+      </td>
     </tr>
   <% end %>
   </tbody>

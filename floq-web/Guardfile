@@ -1,0 +1,28 @@
+module Server
+  extend self
+
+  def kill
+    Process.kill 'INT', @server if @server 
+  end
+
+  def spawn
+    @server = Process.spawn 'rackup --port 3000 test/config.ru' 
+  end
+
+  at_exit { kill }
+end
+
+guard :bundler do
+  watch 'Gemfile'
+end
+
+guard :shell, all_on_start: true do
+  watch /Gemfile|web.rb|config.ru/ do
+    Server.kill
+    Server.spawn
+  end
+end
+
+guard 'livereload', grace_period: 0.5 do
+  watch /web.rb|config.ru|erb/
+end

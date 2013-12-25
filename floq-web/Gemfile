@@ -2,3 +2,10 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'floq', path: '../floq'
+
+gem 'rack-livereload'
+
+gem 'guard'
+gem 'guard-shell'
+gem 'guard-bundler'
+gem 'guard-livereload'
