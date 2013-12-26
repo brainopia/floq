@@ -10,6 +10,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = %w(lib)
 
   gem.add_dependency 'floq'
-  gem.add_dependency 'sinatra'
+  gem.add_dependency 'railties'
+  gem.add_dependency 'slim'
   gem.add_development_dependency 'rspec'
 end

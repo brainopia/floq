@@ -39,4 +39,8 @@ class Floq::Queues::Base
   def pull_and_handle
     pull {|data| handler.call data }
   end
+
+  def read(from: offset, count: 10)
+    provider.read(name, from, count).map &method(:decode)
+  end
 end

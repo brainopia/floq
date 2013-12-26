@@ -10,7 +10,7 @@ class Floq
     attr_accessor :provider
 
     def [](name, type=:parallel)
-      QUEUES[name] ||= Queues.const_get(camelcase type).new name
+      QUEUES[name.to_sym] ||= Queues.const_get(camelcase type).new name
     end
 
     def queues

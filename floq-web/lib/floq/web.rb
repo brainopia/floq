@@ -1,29 +1,17 @@
 require 'floq'
-require 'sinatra/base'
+require 'rails'
+require 'action_view'
+require 'slim'
 
-class Floq::Web < Sinatra::Base
-  set :root, File.expand_path('../..', __dir__)
+Slim::Parser.default_options[:shortcut]['@'] = {
+  attr: 'role'
+}
 
-  get '/' do
-    erb :index
-  end
+class Floq::Web < Rails::Engine
+  isolate_namespace Floq
 
-  get '/queue/:name' do
-    erb :queue
-  end
-
-  delete '/queue/:name' do
-    queue.drop
-    redirect back
-  end
-
-  helpers do
-    def queue
-      Floq[params[:name]] 
-    end
-
-    def queues
-      Floq.queues 
-    end
+  routes.append do
+    get '/' => 'queues#index'
+    resources :queues, only: %w(show destroy)
   end
 end

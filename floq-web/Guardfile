@@ -17,12 +17,12 @@ guard :bundler do
 end
 
 guard :shell, all_on_start: true do
-  watch /Gemfile|web.rb|config.ru/ do
+  watch /Gemfile|web.rb|app|config.ru/ do
     Server.kill
     Server.spawn
   end
 end
 
-guard 'livereload', grace_period: 0.5 do
-  watch /web.rb|config.ru|erb/
+guard 'livereload', grace_period: 1.5 do
+  watch /views/
 end

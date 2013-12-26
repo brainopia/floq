@@ -1,0 +1,13 @@
+h2.ui.header
+  i.inbox.icon
+  = @queue.label
+
+table.ui.table.segment
+  thead
+    tr
+      th Data
+  tbody
+    - @queue.read.each do |message|
+      tr
+        td
+          = message

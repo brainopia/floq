@@ -67,8 +67,8 @@ class Floq::Providers::Redis
     client.lrange(confirm_key(queue), 0, -1).map(&:to_i).min
   end
 
-  def all(queue)
-    client.lrange queue, 0, -1
+  def read(queue, from, count)
+    client.lrange queue, from, from + count - 1
   end
 
   private

@@ -4,7 +4,8 @@ class Floq::Queues::EventSourced < Floq::Queues::Base
   end
 
   def peek
-    events = provider.all name
+    events = read count: 10_000
+    raise 'too much events' if events.size == 10_000
     merged = events.reduce {|total, event| total.merge event }
     merged.delete_if {|_, value| value.nil? }
   end

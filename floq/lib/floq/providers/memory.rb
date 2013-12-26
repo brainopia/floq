@@ -27,7 +27,7 @@ module Floq::Providers::Memory
   end
 
   def offset(queue)
-    OFFSETS[queue]
+    OFFSETS[queue].to_i
   end
 
   def offset!(queue, value)
@@ -52,7 +52,7 @@ module Floq::Providers::Memory
     CONFIRMS[queue].min
   end
 
-  def all(name)
-    MESSAGES[name]
+  def read(name, from, count)
+    MESSAGES[name][from, count]
   end
 end

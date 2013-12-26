@@ -1,6 +1,6 @@
-require_relative '../lib/floq/web'
-require 'bundler/setup'
+require_relative '../lib/floq/web/application'
 require 'rack-livereload'
+require 'better_errors'
 
 Floq.provider = Floq::Providers::Memory
 
@@ -8,5 +8,8 @@ Floq.provider = Floq::Providers::Memory
   Floq[:demo].push message: :foo
 end
 
+Floq::Web::Application.config.consider_all_requests_local = true
+Floq::Web::Application.initialize!
+
 use Rack::LiveReload
-run Floq::Web
+run Floq::Web::Application

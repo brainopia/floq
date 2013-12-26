@@ -1,0 +1,22 @@
+table.ui.table.segment@queues
+  thead
+    tr
+      th Name
+      th Count
+      th Garbage
+      th Actions
+  tbody
+    - @queues.each do |queue|
+      tr
+        td
+          a href=queue_path(queue.label)
+            = queue.label
+        td
+          = queue.count
+        td
+          = queue.offset
+        td
+          .small.ui.icon.buttons
+            a.ui.button[href=queue_path(queue.label)
+                        data={ method: 'delete', confirm: 'Are you sure?' }]
+              i.trash.icon
