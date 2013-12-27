@@ -3,7 +3,7 @@ class Floq
   require_relative 'floq/queues'
   require_relative 'floq/schedulers'
   require_relative 'floq/providers'
-  require_relavive 'floq/group'
+  require_relative 'floq/group'
 
   QUEUES = {}
 
