@@ -6,7 +6,7 @@ class Floq::Group
     @port       = options.fetch :port, 0
     @schedulers = options.delete(:schedulers) { [] }
 
-    listen address, port
+    listen @address, @port
     add_system_scheduler
   end
 
