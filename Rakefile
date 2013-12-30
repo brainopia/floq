@@ -2,10 +2,10 @@ desc 'Run all tests by default'
 task :default => :rspec
 
 def projects
-  Dir['*/Gemfile'].map do |gemfile|
+  Dir['*/Gemfile'].map {|gemfile|
     next if gemfile.include? 'floq-web'
     File.basename File.expand_path '..', gemfile
-  end
+  }.compact
 end
 
 def execute_for_all_projects(command)
