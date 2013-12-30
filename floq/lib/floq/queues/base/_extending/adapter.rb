@@ -1,9 +1,9 @@
 class Floq::Queues::Base
-  def self.delegate_provider(*methods)
+  def self.delegate_adapter(*methods)
     methods.each do |method|
       class_eval <<-CODE
         def #{method}
-          provider.#{method} name
+          adapter.#{method} name
         end
       CODE
     end
@@ -11,7 +11,7 @@ class Floq::Queues::Base
 
   private
 
-  def provider
-    Floq.provider
+  def adapter
+    Floq.adapter
   end
 end

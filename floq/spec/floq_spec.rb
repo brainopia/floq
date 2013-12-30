@@ -1,16 +1,16 @@
 require 'spec_helper'
 
 describe Floq do
-  context 'unset #provider' do
+  context 'unset #adapter' do
     around do |example|
-      provider = Floq.provider
-      Floq.provider = nil
+      adapter = Floq.adapter
+      Floq.adapter = nil
       example.run
-      Floq.provider = provider
+      Floq.adapter = adapter
     end
 
     it 'raises an exception' do
-      expect { Floq.provider }.to raise_exception
+      expect { Floq.adapter }.to raise_exception
     end
   end
 end

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Floq::Queues do
   let(:name)     { :test_queue }
   let(:message)  {{ foo: :bar }}
-  let(:messages) { Floq::Providers::Memory::MESSAGES }
+  let(:messages) { Floq::Adapters::Memory::MESSAGES }
 
   before { queue.drop }
 

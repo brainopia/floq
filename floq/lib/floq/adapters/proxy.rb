@@ -1,4 +1,4 @@
-class Floq::Providers::Proxy
+class Floq::Adapters::Proxy
   def self.intercept(*methods)
     methods.each do |name|
       define_method name do |*args|

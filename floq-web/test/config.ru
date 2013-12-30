@@ -2,7 +2,7 @@ require_relative '../lib/floq/web/application'
 require 'rack-livereload'
 require 'better_errors'
 
-Floq.provider = Floq::Providers::Memory
+Floq.adapter = Floq::Adapters::Memory
 
 10.times do
   Floq[:demo].push message: :foo

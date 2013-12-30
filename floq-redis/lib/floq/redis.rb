@@ -1,1 +1,1 @@
-require_relative 'providers/redis'
+require_relative 'adapters/redis'

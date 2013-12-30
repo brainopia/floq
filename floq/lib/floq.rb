@@ -2,13 +2,13 @@ class Floq
   require_relative 'floq/serializer'
   require_relative 'floq/queues'
   require_relative 'floq/schedulers'
-  require_relative 'floq/providers'
+  require_relative 'floq/adapters'
   require_relative 'floq/group'
 
   QUEUES = {}
 
   class << self
-    attr_writer :provider
+    attr_writer :adapter
 
     def [](name, type=:parallel)
       QUEUES[name.to_sym] ||= Queues.const_get(camelcase type).new name
@@ -18,8 +18,8 @@ class Floq
       QUEUES.values
     end
 
-    def provider
-      @provider or raise 'You have to set a Floq.provider'
+    def adapter
+      @adapter or raise 'You have to set a Floq.adapter'
     end
 
     private

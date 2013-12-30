@@ -1,7 +1,7 @@
 require 'floq'
 require 'redis'
 
-class Floq::Providers::Redis
+class Floq::Adapters::Redis
   def initialize(settings={})
     @settings = settings
   end

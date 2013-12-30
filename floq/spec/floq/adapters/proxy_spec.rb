@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Floq::Providers::Proxy do
+describe Floq::Adapters::Proxy do
   let(:log) { [] }
-  let(:actual_provider) { Floq::Providers::Memory }
+  let(:actual_provider) { Floq::Adapters::Memory }
 
   subject do
     described_class.new actual_provider do |*args, &action|

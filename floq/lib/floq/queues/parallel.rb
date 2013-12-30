@@ -1,5 +1,5 @@
 class Floq::Queues::Parallel < Floq::Queues::Base
-  delegate_provider :confirmed_offset
+  delegate_adapter :confirmed_offset
   prepend DelayedRetry
 
   def pull
@@ -12,11 +12,11 @@ class Floq::Queues::Parallel < Floq::Queues::Base
   end
 
   def confirm(offset)
-    provider.confirm name, offset
+    adapter.confirm name, offset
   end
 
   def peek_and_skip
-    message, offset = provider.peek_and_skip name
+    message, offset = adapter.peek_and_skip name
     [decode(message), offset] if message
   end
 end

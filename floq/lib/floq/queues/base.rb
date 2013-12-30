@@ -1,10 +1,10 @@
 class Floq::Queues::Base
   include Floq::Serializer
-  require_relative 'base/_extending/provider'
+  require_relative 'base/_extending/adapter'
   require_relative 'base/delayed_retry'
 
   attr_reader :label, :name, :handler
-  delegate_provider :drop, :skip, :skip_all, :offset, :total
+  delegate_adapter :drop, :skip, :skip_all, :offset, :total
 
   def initialize(label)
     raise ArgumentError, label unless label
@@ -20,17 +20,17 @@ class Floq::Queues::Base
   end
 
   def peek
-    message = provider.peek name
+    message = adapter.peek name
     decode message if message
   end
 
   def offset!(value)
-    provider.offset! name, value
+    adapter.offset! name, value
   end
 
   def push(message)
     encoded = encode message
-    provider.push name, encoded
+    adapter.push name, encoded
   end
 
   def handle(&block)
@@ -42,6 +42,6 @@ class Floq::Queues::Base
   end
 
   def read(from: offset, count: 10)
-    provider.read(name, from, count).map &method(:decode)
+    adapter.read(name, from, count).map &method(:decode)
   end
 end

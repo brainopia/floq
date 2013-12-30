@@ -1,4 +1,4 @@
-module Floq::Providers::Memory
+module Floq::Adapters::Memory
   extend self
 
   MESSAGES = Hash.new {|hash, key| hash[key] = [] }
