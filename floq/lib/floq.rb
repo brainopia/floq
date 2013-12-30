@@ -8,7 +8,7 @@ class Floq
   QUEUES = {}
 
   class << self
-    attr_accessor :provider
+    attr_writer :provider
 
     def [](name, type=:parallel)
       QUEUES[name.to_sym] ||= Queues.const_get(camelcase type).new name
@@ -16,6 +16,10 @@ class Floq
 
     def queues
       QUEUES.values
+    end
+
+    def provider
+      @provider or raise 'You have to set a Floq.provider'
     end
 
     private
