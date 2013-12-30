@@ -3,6 +3,7 @@ task :default => :rspec
 
 def projects
   Dir['*/Gemfile'].map do |gemfile|
+    next if gemfile.include? 'floq-web'
     File.basename File.expand_path '..', gemfile
   end
 end
