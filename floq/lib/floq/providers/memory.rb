@@ -52,7 +52,7 @@ module Floq::Providers::Memory
     CONFIRMS[queue].min
   end
 
-  def read(name, from, count)
-    MESSAGES[name][from, count]
+  def read(queue, from, count)
+    MESSAGES[queue][from, count]
   end
 end
