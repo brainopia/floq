@@ -1,6 +1,7 @@
 class Floq::Queues::Base
   include Floq::Serializer
   require_relative 'base/_extending/provider'
+  require_relative 'base/delayed_retry'
 
   attr_reader :label, :name, :handler
   delegate_provider :drop, :skip, :skip_all, :offset, :total

@@ -1,24 +1,12 @@
 class Floq::Queues::Singular < Floq::Queues::Base
-  FAIL_TIMEOUT = 1
+  prepend DelayedRetry
 
   def pull
-    if @failed
-      if Time.now - @failed <= FAIL_TIMEOUT
-        return
-      else
-        @failed = nil
-      end
-    end
-
     message = peek
     if message
-      begin
-        yield message
-        skip
-        message
-      rescue
-        @failed = Time.now
-      end
+      yield message
+      skip
+      message
     end
   end
 end
