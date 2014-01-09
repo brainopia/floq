@@ -9,8 +9,8 @@ class Floq
   QUEUES = {}
 
   class << self
-    def [](name, type=:default)
-      QUEUES[name.to_sym] ||= Queue.new name, Provider.send(type)
+    def [](name, puller=:parallel)
+      QUEUES[name.to_sym] ||= Queue.new name, Provider.pull(puller)
     end
 
     def queues

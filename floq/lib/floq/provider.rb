@@ -3,16 +3,8 @@ class Floq::Provider
 
   Plugins = Floq::Plugins
 
-  def self.parallel
-    default.dup.tap do |it|
-      it.puller = Plugins::Pullers::Parallel
-    end
-  end
-
-  def self.singular
-    default.dup.tap do |it|
-      it.puller = Plugins::Pullers::Singular
-    end
+  def self.pull(type)
+    default.dup.pull type
   end
 
   def self.default
@@ -25,6 +17,11 @@ class Floq::Provider
 
   def chain
     @chain ||= compile
+  end
+
+  def pull(type)
+    self.puller = Plugins::Pullers.const_get camelize(type)
+    self
   end
 
   def adapter=(value)
@@ -64,5 +61,9 @@ class Floq::Provider
   def compile
     raise unless valid?
     hierarchy.inject {|app, middleware| middleware.new app }
+  end
+
+  def camelize(string)
+    string.to_s.split('_').map(&:capitalize).join
   end
 end
