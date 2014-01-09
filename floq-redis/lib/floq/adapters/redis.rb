@@ -1,6 +1,3 @@
-require 'floq'
-require 'redis'
-
 class Floq::Adapters::Redis
   def initialize(settings={})
     @settings = settings

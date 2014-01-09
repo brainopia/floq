@@ -1,4 +1,4 @@
-module Floq::Serializer
+class Floq::Plugins::Coders::Marshal < Floq::Plugins::Coders::Base
   def encode(data)
     Marshal.dump data
   end

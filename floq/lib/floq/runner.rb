@@ -1,5 +1,5 @@
-class Floq::Group
-  attr_reader :groups, :schedulers
+class Floq::Runner
+  attr_reader :neighbours, :schedulers
 
   def initialize(options={})
     @address    = options.fetch :address, '127.0.0.1'
@@ -31,8 +31,8 @@ class Floq::Group
 
   def publish_location
     @access_key = SecureRandom.hex
-    @groups = { location => @access_key }
-    @group_queue.push @groups
+    @neighbours = { location => @access_key }
+    @neighborhood.push @neighbours
   end
 
   def listen(address, port)
@@ -44,13 +44,13 @@ class Floq::Group
   end
 
   def add_system_scheduler
-    @group_queue = Floq[:groups, :event_sourced]
-    @group_queue.handle do |updated_groups|
-      groups.replace updated_groups
+    @neighborhood = Floq[:groups, :event_sourced]
+    @neighborhood.handle do |runners|
+      neighbours.replace runners
     end
 
     system = Floq::Schedulers::Periodic.new \
-      interval: 10, queues: [ @group_queue ]
+      interval: 10, queues: [ @neighborhood ]
     schedulers.unshift system
   end
 end

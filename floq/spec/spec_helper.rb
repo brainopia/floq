@@ -1,3 +1,3 @@
 require 'floq'
 
-Floq.adapter = Floq::Adapters::Memory
+Floq::Provider.default.adapter = Floq::Adapters::Memory

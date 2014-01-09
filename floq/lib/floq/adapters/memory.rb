@@ -23,11 +23,11 @@ module Floq::Adapters::Memory
   end
 
   def skip_all(queue)
-    OFFSETS[queue] = total(queue)
+    OFFSETS[queue] = total queue
   end
 
   def offset(queue)
-    OFFSETS[queue].to_i
+    OFFSETS[queue]
   end
 
   def offset!(queue, value)
