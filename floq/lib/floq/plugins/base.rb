@@ -1,4 +1,6 @@
 module Floq::Plugins::Base
+  attr_reader :adapter
+
   def initialize(provider, *args)
     @adapter = provider or raise ArgumentError
   end
