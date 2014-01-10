@@ -1,3 +1,5 @@
 require 'floq'
 
-Floq::Provider.default.adapter = Floq::Adapters::Memory
+Floq::Provider.default
+  .use!(:adapter, :memory)
+  .use!(:logger, StringIO.new)

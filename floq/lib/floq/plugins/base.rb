@@ -1,5 +1,5 @@
 module Floq::Plugins::Base
-  def initialize(provider)
+  def initialize(provider, *args)
     @adapter = provider or raise ArgumentError
   end
 

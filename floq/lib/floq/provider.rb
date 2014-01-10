@@ -1,69 +1,52 @@
 class Floq::Provider
-  attr_reader :adapter, :coder, :puller, :rescuer
-
-  Plugins = Floq::Plugins
-
-  def self.pull(type)
-    default.dup.pull type
-  end
+  require_relative 'provider/_compile_chain'
+  require_relative 'provider/_use_plugins'
 
   def self.default
     @default ||= new.tap do |it|
-      it.puller  = Plugins::Pullers::Parallel
-      it.rescuer = Plugins::Rescuers::DelayedRetry
-      it.coder   = Plugins::Coders::Marshal
+      it.use! :puller,  :parallel
+      it.use! :rescuer, :delayed_retry
+      it.use! :coder,   :marshal
     end
   end
 
-  def chain
-    @chain ||= compile
+  def initialize
+    @plugins = {}
+    wrap :helpers, Floq::Plugins::Helpers
   end
 
-  def pull(type)
-    self.puller = Plugins::Pullers.const_get camelize(type)
-    self
+  def hierarchy
+    @plugins.values_at(
+      :adapter,
+      :coder,
+      :puller,
+      :logger,
+      :helpers,
+      :rescuer
+    ).compact
   end
 
-  def adapter=(value)
-    @adapter = value
-    reset_chain
+  def valid?
+    @plugins.values_at(:adapter, :coder, :puller).all?
   end
 
-  def coder=(value)
-    @coder = value
-    reset_chain
-  end
-
-  def puller=(value)
-    @puller = value
-    reset_chain
-  end
-
-  def rescuer=(value)
-    @rescuer = value
-    reset_chain
+  def get(type)
+    @plugins[type.to_sym]
   end
 
   private
 
-  def reset_chain
-    @chain = nil
+  def set(type, value)
+    @plugins[type.to_sym] = value
   end
 
-  def valid?
-    adapter and coder and puller
-  end
-
-  def hierarchy
-    [adapter, coder, puller, Floq::Plugins::Helpers, rescuer].compact
-  end
-
-  def compile
-    raise unless valid?
-    hierarchy.inject {|app, middleware| middleware.new app }
-  end
-
-  def camelize(string)
-    string.to_s.split('_').map(&:capitalize).join
+  def wrap(type, klass, *args)
+    set type, ->(adapter) do
+      if type == :adapter
+        klass.new *args
+      else
+        klass.new adapter, *args
+      end
+    end
   end
 end

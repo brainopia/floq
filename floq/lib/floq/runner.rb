@@ -44,6 +44,8 @@ class Floq::Runner
   end
 
   def add_system_scheduler
+    return # not ready to roll
+
     @neighborhood = Floq[:groups, :event_sourced]
     @neighborhood.handle do |runners|
       neighbours.replace runners

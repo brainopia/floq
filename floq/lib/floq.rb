@@ -1,5 +1,4 @@
-class Floq
-  require_relative 'floq/adapters'
+module Floq
   require_relative 'floq/queue'
   require_relative 'floq/plugins'
   require_relative 'floq/schedulers'
@@ -9,8 +8,8 @@ class Floq
   QUEUES = {}
 
   class << self
-    def [](name, puller=:parallel)
-      QUEUES[name.to_sym] ||= Queue.new name, Provider.pull(puller)
+    def [](name, type=:parallel)
+      QUEUES[name.to_sym] ||= Queue.new name, Provider.use(:puller, type)
     end
 
     def queues

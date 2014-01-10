@@ -3,7 +3,6 @@ require 'spec_helper'
 describe Floq::Queue do
   let(:name)     { :test_queue }
   let(:message)  {{ foo: :bar }}
-  let(:messages) { Floq::Adapters::Memory::MESSAGES }
 
   before { queue.drop }
 
@@ -17,11 +16,6 @@ describe Floq::Queue do
   end
 
   shared_examples_for :queue do
-    it 'push' do
-      queue.push message
-      messages[queue.name].should have(1).message
-    end
-
     context 'empty queue' do
       its(:offset) { 0 }
       its(:peek) { }
