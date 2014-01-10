@@ -1,4 +1,4 @@
-class Floq::Adapters::Redis
+class Floq::Plugins::Adapters::Redis
   def initialize(settings={})
     @settings = settings
   end
