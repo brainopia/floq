@@ -12,6 +12,11 @@ class Floq::Schedulers::Test < Floq::Schedulers::Base
     pushed_queues.clear
   end
 
+  def drop_all
+    queues.each(&:drop)
+    pushed_queues.clear
+  end
+
   def run
     check_handler
     
