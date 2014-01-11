@@ -7,6 +7,7 @@ class Floq::Schedulers::Base
   end
 
   def run
+    check_handler
     loop { pull_and_handle }
   end
 
