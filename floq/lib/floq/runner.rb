@@ -11,7 +11,7 @@ class Floq::Runner
   end
 
   def run
-    raise 'only system scheduler' if schedulers.size == 1
+    # raise 'only system scheduler' if schedulers.size == 1
     publish_location
     run_schedulers
   end
