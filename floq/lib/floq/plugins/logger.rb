@@ -7,38 +7,54 @@ class Floq::Plugins::Logger
   end
 
   def pull(queue, &block)
-    log_around 'pull', queue do
-      @adapter.pull queue, &block
+    @adapter.pull queue do |message|
+      log_around pre: 'pull', post: queue, payload: message do
+        block.call message
+      end
     end
   end
 
   def push(queue, data)
-    log "push #{queue}\n#{Format.indent data}"
+    log "push #{queue}", data
     @adapter.push queue, data
   end
 
-  def log(message)
-    @logger.puts "#{Time.now} -- #{message}"
+  def log(message, *payload)
+    @logger.puts Format.with_time Format.block(message, payload)
   end
 
-  def log_around(pre, post='', &block)
-    log "#{pre} begin #{post}"
+  def log_around(pre:'', post:'', payload:nil, &block)
+    log "#{pre} begin #{post}", payload
     start_time = Time.now
     yield
   ensure
     spent_time = Time.now - start_time
-    log "#{pre} finish #{post} #{Format.status $!}"
+    post << ' ' << Format.duration(spent_time)
+    log "#{pre} finish #{post}", payload, *($! && $!.backtrace)
   end
 
   module Format
     extend self
 
     def status(error)
-      if error
-        "failure\n" + indent(error.backtrace)
+      error ? 'failure' : 'success'
+    end
+
+    def block(message, payload)
+      payload.compact!
+      if payload.empty?
+        message
       else
-        'success'
+        message << "\n" << Format.indent(payload)
       end
+    end
+
+    def duration(time)
+      "duration: #{time.round 2}"
+    end
+
+    def with_time(message)
+      "#{Time.now} -- #{message}"
     end
 
     def indent(text, offset=4)
