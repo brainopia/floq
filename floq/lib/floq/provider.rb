@@ -21,8 +21,8 @@ class Floq::Provider
       :coder,
       :puller,
       :logger,
-      :helpers,
-      :rescuer
+      :rescuer,
+      :helpers
     ).compact
   end
 
