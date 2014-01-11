@@ -6,13 +6,13 @@ class Floq::Runner
     @port       = options.fetch :port, 0
     @schedulers = options.delete(:schedulers) { [] }
 
-    listen @address, @port
-    add_system_scheduler
+    # listen @address, @port
+    # add_system_scheduler
   end
 
   def run
     # raise 'only system scheduler' if schedulers.size == 1
-    publish_location
+    # publish_location
     run_schedulers
   end
 
@@ -44,8 +44,6 @@ class Floq::Runner
   end
 
   def add_system_scheduler
-    return # not ready to roll
-
     @neighborhood = Floq[:groups, :event_sourced]
     @neighborhood.handle do |runners|
       neighbours.replace runners
