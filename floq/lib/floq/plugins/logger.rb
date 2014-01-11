@@ -40,14 +40,14 @@ class Floq::Plugins::Logger
     def block(message, payload)
       payload.compact!
       if payload.empty?
-        message << EOL
+        message << EOL*2
       else
-        message << EOL << Format.indent(payload) << EOL
+        message << EOL << Format.indent(payload) << EOL*2
       end
     end
 
     def duration(time)
-      "duration: #{time.round 2}"
+      "[#{time.round 2}]"
     end
 
     def with_time(message)
