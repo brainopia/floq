@@ -29,7 +29,7 @@ class Floq::Plugins::Logger
     yield
   ensure
     spent_time = Time.now - start_time
-    post << ' ' << Format.duration(spent_time)
+    post += ' ' << Format.duration(spent_time)
     log "#{pre} finish #{post}", payload, *($! && $!.backtrace)
   end
 
@@ -40,9 +40,9 @@ class Floq::Plugins::Logger
     def block(message, payload)
       payload.compact!
       if payload.empty?
-        message << EOL*2
+        message + EOL*2
       else
-        message << EOL << Format.indent(payload) << EOL*2
+        message + EOL << Format.indent(payload) << EOL*2
       end
     end
 
