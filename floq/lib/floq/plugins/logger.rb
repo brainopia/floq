@@ -35,17 +35,14 @@ class Floq::Plugins::Logger
 
   module Format
     extend self
-
-    def status(error)
-      error ? 'failure' : 'success'
-    end
+    EOL = "\n"
 
     def block(message, payload)
       payload.compact!
       if payload.empty?
-        message
+        message << EOL
       else
-        message << "\n" << Format.indent(payload)
+        message << EOL << Format.indent(payload) << EOL
       end
     end
 
