@@ -34,6 +34,15 @@ class Floq::Provider
     @plugins[type.to_sym]
   end
 
+  def reset!(type)
+    @plugins[type.to_sym] = nil
+    self
+  end
+
+  def reset(type)
+    clone.reset! type
+  end
+
   private
 
   def set(type, value)
