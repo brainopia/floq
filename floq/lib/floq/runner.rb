@@ -14,7 +14,7 @@ class Floq::Runner
   def run
     # raise 'only system scheduler' if schedulers.size == 1
     # publish_location
-    setup_signal_traps
+    # setup_signal_traps
     run_schedulers
   end
 
