@@ -9,4 +9,8 @@ class Floq::Plugins::Pullers::Parallel
       message
     end
   end
+
+  def splittable?
+    true
+  end
 end

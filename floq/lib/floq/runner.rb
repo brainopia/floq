@@ -5,9 +5,10 @@ class Floq::Runner
     @address    = options.fetch :address, '127.0.0.1'
     @port       = options.fetch :port, 0
     @schedulers = options.delete(:schedulers) { [] }
+    @split      = options.delete(:split) { 1 }
 
     # listen @address, @port
-    # add_system_scheduler
+    # add_system_scheduler # TODO: prevent splitting
   end
 
   def run
@@ -24,9 +25,10 @@ class Floq::Runner
 
   def run_schedulers
     Thread.abort_on_exception = true
-    @schedulers.map do |scheduler|
-      Thread.new { scheduler.run }
-    end.each(&:join)
+    @schedulers
+      .flat_map {|scheduler| scheduler.split @split }
+      .map {|scheduler| Thread.new { scheduler.run }}
+      .each(&:join)
   end
 
   def publish_location

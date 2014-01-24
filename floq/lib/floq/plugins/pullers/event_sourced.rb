@@ -23,4 +23,8 @@ class Floq::Plugins::Pullers::EventSourced
   def offset
     0
   end
+
+  def splittable?
+    true
+  end
 end

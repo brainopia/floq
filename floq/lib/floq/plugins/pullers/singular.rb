@@ -9,4 +9,8 @@ class Floq::Plugins::Pullers::Singular
       message
     end
   end
+
+  def splittable?
+    false
+  end
 end
