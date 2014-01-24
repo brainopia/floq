@@ -4,6 +4,7 @@ class Floq::Plugins::Logger
   def initialize(adapter, file)
     super
     @logger = file
+    @logger.sync = true
   end
 
   def pull(queue, &block)
