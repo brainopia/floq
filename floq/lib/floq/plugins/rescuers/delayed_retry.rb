@@ -7,17 +7,6 @@ class Floq::Plugins::Rescuers::DelayedRetry
     @last_messages = {}
   end
 
-  def peek_and_skip(queue)
-    @adapter.peek_and_skip(queue).tap do |message,_|
-      @last_messages[queue] = message
-    end
-  end
-
-  def peek(queue)
-    message = @adapter.peek queue
-    @last_messages[queue] = message
-  end
-
   def pull(queue, &block)
     if @delayed_retry
       if Time.now - @delayed_retry <= FAIL_TIMEOUT
@@ -32,7 +21,10 @@ class Floq::Plugins::Rescuers::DelayedRetry
       if try_again
         block.call @last_messages[queue]
       else
-        @adapter.pull queue, &block
+        @adapter.pull queue do |message|
+          @last_messages[queue] = message
+          block.call message
+        end
       end
     rescue
       @delayed_retry = Time.now
