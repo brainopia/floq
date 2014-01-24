@@ -13,6 +13,11 @@ class Floq::Plugins::Rescuers::DelayedRetry
     end
   end
 
+  def peek(queue)
+    message = @adapter.peek queue
+    @last_messages[queue] = message
+  end
+
   def pull(queue, &block)
     if @delayed_retry
       if Time.now - @delayed_retry <= FAIL_TIMEOUT
