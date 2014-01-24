@@ -31,7 +31,7 @@ class Floq::Plugins::Logger
   ensure
     spent_time = Time.now - start_time
     post += ' ' << Format.duration(spent_time)
-    payload = [payload, $!.message, *$!.backtrace] if $!
+    payload = $! ? [payload, $!.message, *$!.backtrace] : [payload]
     log "#{pre} finish #{post}", *payload
   end
 
