@@ -10,7 +10,7 @@ class Floq::Plugins::Pullers::Singular
     end
   end
 
-  def splittable?
+  def splittable?(_)
     false
   end
 end

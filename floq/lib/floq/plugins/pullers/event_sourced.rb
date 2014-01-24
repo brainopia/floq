@@ -24,7 +24,7 @@ class Floq::Plugins::Pullers::EventSourced
     0
   end
 
-  def splittable?
+  def splittable?(_)
     true
   end
 end
