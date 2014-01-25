@@ -23,7 +23,7 @@ class Floq::Plugins::Helpers
   end
 
   def pull_and_handle(queue)
-    @adapter.pull(queue) {|data| handler(queue).call data }
+    pull(queue) {|data| handler(queue).call data }
   end
 
   def pull(queue, &block)
@@ -31,6 +31,13 @@ class Floq::Plugins::Helpers
       pull from #{queue} without a block
     ERROR
 
-    @adapter.pull queue, &block
+    pulled = false
+
+    @adapter.pull queue do |message|
+      pulled = true
+      block.call message
+    end
+
+    pulled
   end
 end
