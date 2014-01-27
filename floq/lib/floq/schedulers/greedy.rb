@@ -2,11 +2,15 @@ class Floq::Schedulers::Greedy < Floq::Schedulers::Base
   MAX_DELAY = 5
   HISTORY_SIZE = 3
 
-  class Wrapper < SimpleDelegator
+  class Wrapper
+    def initialize(queue)
+      @queue = queue
+    end
+
     def pull_and_handle
       @status ||= Array.new(HISTORY_SIZE, true)
       @status.shift
-      pulled_status = super
+      pulled_status = @queue.pull_and_handle
       @status.push pulled_status
       missed_times = @status.count(false)
       sleep MAX_DELAY * missed_times.to_f / HISTORY_SIZE
