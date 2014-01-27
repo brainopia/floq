@@ -4,11 +4,11 @@ class Floq::Schedulers::Greedy < Floq::Schedulers::Base
 
   class Wrapper
     def initialize(queue)
-      @queue = queue
+      @queue  = queue
+      @status = Array.new(HISTORY_SIZE, true)
     end
 
     def pull_and_handle
-      @status ||= Array.new(HISTORY_SIZE, true)
       @status.shift
       pulled_status = @queue.pull_and_handle
       @status.push pulled_status
