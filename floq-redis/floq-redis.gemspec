@@ -11,5 +11,6 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency 'floq'
   gem.add_dependency 'redis'
+  gem.add_dependency 'connection_pool'
   gem.add_development_dependency 'rspec'
 end
