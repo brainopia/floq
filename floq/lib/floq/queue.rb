@@ -1,5 +1,5 @@
 class Floq::Queue
-  attr_reader :label, :name
+  attr_reader :label, :name, :provider
 
   def initialize(label, provider=Provider.default)
     raise ArgumentError unless label
