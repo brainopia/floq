@@ -11,7 +11,7 @@ class Floq::Provider
 
   def compile
     raise unless valid?
-    hierarchy.inject(nil) do |app, middleware|
+    hierarchy.inject do |app, middleware|
       middleware.call app
     end
   end

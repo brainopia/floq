@@ -49,13 +49,11 @@ class Floq::Provider
     @plugins[type.to_sym] = value
   end
 
-  def wrap(type, klass, *args)
-    set type, ->(adapter) do
-      if type == :adapter
-        klass.new *args
-      else
-        klass.new adapter, *args
-      end
+  def wrap(type, target, *args)
+    set type, if type == :adapter
+      target.new *args
+    else
+      ->(adapter) { target.new adapter, *args }
     end
   end
 end
