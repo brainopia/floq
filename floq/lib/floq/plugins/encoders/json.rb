@@ -1,6 +1,6 @@
 require 'json'
 
-class Floq::Plugins::Coders::Json < Floq::Plugins::Coders::Base
+class Floq::Plugins::Encoders::Json < Floq::Plugins::Encoders::Base
   def encode(data)
     JSON data
   end

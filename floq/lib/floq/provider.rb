@@ -6,7 +6,7 @@ class Floq::Provider
     @default ||= new.tap do |it|
       it.use! :puller,  :parallel
       it.use! :rescuer, :delayed_retry
-      it.use! :coder,   :marshal
+      it.use! :encoder,   :marshal
     end
   end
 
@@ -18,7 +18,7 @@ class Floq::Provider
   def hierarchy
     @plugins.values_at(
       :adapter,
-      :coder,
+      :encoder,
       :puller,
       :logger,
       :rescuer,
@@ -27,7 +27,7 @@ class Floq::Provider
   end
 
   def valid?
-    @plugins.values_at(:adapter, :coder, :puller).all?
+    @plugins.values_at(:adapter, :encoder, :puller).all?
   end
 
   def get(type)

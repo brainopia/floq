@@ -1,4 +1,4 @@
-class Floq::Plugins::Coders::Marshal < Floq::Plugins::Coders::Base
+class Floq::Plugins::Encoders::Marshal < Floq::Plugins::Encoders::Base
   def encode(data)
     Marshal.dump data
   end

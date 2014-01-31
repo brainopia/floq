@@ -1,4 +1,4 @@
-class Floq::Plugins::Coders::Base
+class Floq::Plugins::Encoders::Base
   include Floq::Plugins::Base
 
   def offset(queue)
