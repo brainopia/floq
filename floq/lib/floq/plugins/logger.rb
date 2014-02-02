@@ -38,6 +38,7 @@ class Floq::Plugins::Logger
   module Format
     extend self
     EOL = "\n"
+    SPACE = ' '
 
     def block(message, payload)
       payload.compact!
@@ -60,7 +61,7 @@ class Floq::Plugins::Logger
       if text.is_a? Array
         text.map {|it| indent it, offset }.join "\n"
       else
-        text.to_s.prepend ' '*offset
+        text.to_s + SPACE*offset
       end
     end
   end
