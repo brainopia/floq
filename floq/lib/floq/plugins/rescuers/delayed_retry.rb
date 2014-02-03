@@ -2,9 +2,10 @@ class Floq::Plugins::Rescuers::DelayedRetry
   include Floq::Plugins::Base
   FAIL_TIMEOUT = 1
 
-  def initialize(*)
+  def initialize(adapter, callback)
     super
     @last_messages = {}
+    @callback = callback
   end
 
   def pull(queue, &block)
@@ -28,6 +29,7 @@ class Floq::Plugins::Rescuers::DelayedRetry
       end
     rescue
       @delayed_retry = Time.now
+      @callback.call queue, $! if @callback
     end
   end
 end
