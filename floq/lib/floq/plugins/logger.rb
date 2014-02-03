@@ -13,6 +13,9 @@ class Floq::Plugins::Logger
         block.call message
       end
     end
+  rescue
+    log "exception during pull #{queue}", $!.message, $!.backtrace
+    raise
   end
 
   def push(queue, data)
