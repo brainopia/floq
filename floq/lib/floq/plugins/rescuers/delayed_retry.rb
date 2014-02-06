@@ -20,7 +20,7 @@ class Floq::Plugins::Rescuers::DelayedRetry
     end
 
     begin
-      if try_again
+      if try_again and @messages[queue]
         block.call @messages[queue]
       else
         @adapter.pull queue do |message|
