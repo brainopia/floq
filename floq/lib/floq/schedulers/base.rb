@@ -1,5 +1,6 @@
 class Floq::Schedulers::Base
   attr_reader :options, :queues
+  CLEANUP_PERIOD = 120
 
   def initialize(options={})
     @options = options
@@ -8,6 +9,7 @@ class Floq::Schedulers::Base
 
   def run
     check_handler
+    start_cleanup_thread
     loop { pull_and_handle }
   end
 
@@ -38,6 +40,15 @@ class Floq::Schedulers::Base
     without_handler = queues.reject(&:handler)
     unless without_handler.empty?
       raise ArgumentError, "Missing handler for #{without_handler}"
+    end
+  end
+
+  def start_cleanup_thread
+    Thread.new do
+      loop do
+        queues.each(&:cleanup)
+        sleep CLEANUP_PERIOD
+      end
     end
   end
 end
