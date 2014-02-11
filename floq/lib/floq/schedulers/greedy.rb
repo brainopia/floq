@@ -22,9 +22,11 @@ class Floq::Schedulers::Greedy < Floq::Schedulers::Base
 
   def run
     check_handler
+    start_cleanup_thread
     queues.each do |queue|
       Thread.new do
-        loop { Wrapper.new(queue).pull_and_handle }
+        wrapper = Wrapper.new queue
+        loop { wrapper.pull_and_handle }
       end
     end
     sleep
