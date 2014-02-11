@@ -60,10 +60,10 @@ class Floq::Plugins::Adapters::Redis
 
   def peek_and_skip(queue)
     pool.with do |client|
-      # todo: evalsha
+      # TODO: evalsha
       client.eval <<-LUA, argv: [queue.to_s, offset_key(queue)]
-        local queue      = table.remove(argv, 1)
-        local offset_key = table.remove(argv, 1)
+        local queue      = table.remove(ARGV, 1)
+        local offset_key = table.remove(ARGV, 1)
         local offset     = redis.call('get', offset_key) or 0
         local message    = redis.call('lindex', queue, offset)
 
@@ -93,8 +93,8 @@ class Floq::Plugins::Adapters::Redis
     when :singular
       pool.with do |client|
         client.eval <<-LUA, argv: [queue.to_s, offset_key(queue)]
-          local queue      = table.remove(argv, 1)
-          local offset_key = table.remove(argv, 1)
+          local queue      = table.remove(ARGV, 1)
+          local offset_key = table.remove(ARGV, 1)
           local offset     = redis.call('get', offset_key)
 
           if offset and offset != 0 then
@@ -107,9 +107,9 @@ class Floq::Plugins::Adapters::Redis
       pool.with do |client|
         # TODO: evalsha
         client.eval <<-LUA, argv: [queue.to_s, offset_key(queue), confirm_key(queue)]
-          local queue       = table.remove(argv, 1)
-          local offset_key  = table.remove(argv, 1)
-          local confirm_key = table.remove(argv, 1)
+          local queue       = table.remove(ARGV, 1)
+          local offset_key  = table.remove(ARGV, 1)
+          local confirm_key = table.remove(ARGV, 1)
           local confirms    = redis.call('get', confirm_key)
           local cursor      = 1
 
