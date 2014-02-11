@@ -13,4 +13,8 @@ class Floq::Plugins::Pullers::Singular
   def splittable?(_)
     false
   end
+
+  def cleanup(queue)
+    cleanup queue, :singular
+  end
 end

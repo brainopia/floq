@@ -50,11 +50,13 @@ class Floq::Plugins::Adapters::Memory
     confirms[queue] << offset
   end
 
-  def confirmed_offset(queue)
-    confirms[queue].min
-  end
-
   def read(queue, from, count)
     messages[queue][from, count]
+  end
+
+  def cleanup(queue, type)
+    offsets[queue] = 0
+    messages[queue].clear
+    confirms[queue].clear
   end
 end

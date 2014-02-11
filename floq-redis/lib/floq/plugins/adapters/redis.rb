@@ -60,10 +60,10 @@ class Floq::Plugins::Adapters::Redis
 
   def peek_and_skip(queue)
     pool.with do |client|
-      # TODO: evalsha
+      # todo: evalsha
       client.eval <<-LUA, argv: [queue.to_s, offset_key(queue)]
-        local queue      = table.remove(ARGV, 1)
-        local offset_key = table.remove(ARGV, 1)
+        local queue      = table.remove(argv, 1)
+        local offset_key = table.remove(argv, 1)
         local offset     = redis.call('get', offset_key) or 0
         local message    = redis.call('lindex', queue, offset)
 
@@ -78,19 +78,59 @@ class Floq::Plugins::Adapters::Redis
 
   def confirm(queue, offset)
     pool.with do |client|
-      client.rpush confirm_key(queue), offset
-    end
-  end
-
-  def confirmed_offset(queue)
-    pool.with do |client|
-      client.lrange(confirm_key(queue), 0, -1).map(&:to_i).min
+      client.setbit confirm_key(queue), offset, 1
     end
   end
 
   def read(queue, from, count)
     pool.with do |client|
       client.lrange queue, from, from + count - 1
+    end
+  end
+
+  def cleanup(queue, type=:default)
+    case type
+    when :singular
+      pool.with do |client|
+        client.eval <<-LUA, argv: [queue.to_s, offset_key(queue)]
+          local queue      = table.remove(argv, 1)
+          local offset_key = table.remove(argv, 1)
+          local offset     = redis.call('get', offset_key)
+
+          if offset and offset != 0 then
+            redis.call('del', offset_key)
+            redis.call('ltrim', queue, offset, -1)
+          end
+        LUA
+      end
+    when :parallel
+      pool.with do |client|
+        # TODO: evalsha
+        client.eval <<-LUA, argv: [queue.to_s, offset_key(queue), confirm_key(queue)]
+          local queue       = table.remove(argv, 1)
+          local offset_key  = table.remove(argv, 1)
+          local confirm_key = table.remove(argv, 1)
+          local confirms    = redis.call('get', confirm_key)
+          local cursor      = 1
+
+          while true do
+            if string.byte(confirms, cursor) == 255 then
+              cursor = cursor + 1
+            else
+              break
+            end
+          end
+
+          if cursor > 1 then
+            local deletedConfirmations = (cursor-1)*8
+            local new_offset = offset - deletedConfirmations
+
+            redis.call('set', offset_key, new_offset)
+            redis.call('set', string.sub(confirms, cursor, -1))
+            redis.call('ltrim', queue, deletedConfirmations, -1)
+          end
+        LUA
+      end
     end
   end
 

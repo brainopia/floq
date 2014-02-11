@@ -13,4 +13,8 @@ class Floq::Plugins::Pullers::Parallel
   def splittable?(_)
     true
   end
+
+  def cleanup(queue)
+    cleanup queue, :parallel
+  end
 end
