@@ -113,21 +113,23 @@ class Floq::Plugins::Adapters::Redis
           local confirms    = redis.call('get', confirm_key)
           local cursor      = 1
 
-          while true do
-            if string.byte(confirms, cursor) == 255 then
-              cursor = cursor + 1
-            else
-              break
+          if confirms then
+            while true do
+              if string.byte(confirms, cursor) == 255 then
+                cursor = cursor + 1
+              else
+                break
+              end
             end
-          end
 
-          if cursor > 1 then
-            local deletedConfirmations = (cursor-1)*8
-            local new_offset = offset - deletedConfirmations
+            if cursor > 1 then
+              local deletedConfirmations = (cursor-1)*8
+              local new_offset = offset - deletedConfirmations
 
-            redis.call('set', offset_key, new_offset)
-            redis.call('set', string.sub(confirms, cursor, -1))
-            redis.call('ltrim', queue, deletedConfirmations, -1)
+              redis.call('set', offset_key, new_offset)
+              redis.call('set', string.sub(confirms, cursor, -1))
+              redis.call('ltrim', queue, deletedConfirmations, -1)
+            end
           end
         LUA
       end
