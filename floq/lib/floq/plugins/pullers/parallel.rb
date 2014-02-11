@@ -15,6 +15,6 @@ class Floq::Plugins::Pullers::Parallel
   end
 
   def cleanup(queue)
-    cleanup queue, :parallel
+    @adapter.cleanup queue, :parallel
   end
 end

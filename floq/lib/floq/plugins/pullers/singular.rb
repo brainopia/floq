@@ -15,6 +15,6 @@ class Floq::Plugins::Pullers::Singular
   end
 
   def cleanup(queue)
-    cleanup queue, :singular
+    @adapter.cleanup queue, :singular
   end
 end
