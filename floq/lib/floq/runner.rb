@@ -29,7 +29,7 @@ class Floq::Runner
     @schedulers
       .flat_map {|scheduler| scheduler.split @split }
       .map {|scheduler| Thread.new { scheduler.run }}
-      .each(&:join)
+    sleep
   end
 
   def publish_location
