@@ -76,7 +76,7 @@ describe Floq::Plugins::Adapters::Redis do
       subject.confirm(queue, 1)
       confirm_key = subject.send(:confirm_key, queue)
       subject.pool.with do |client|
-        client.lindex(confirm_key, 0).should == '1'
+        client.getbit(confirm_key, 1).should == 1
       end
     end
 
