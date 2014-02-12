@@ -97,7 +97,7 @@ class Floq::Plugins::Adapters::Redis
           local offset_key = table.remove(ARGV, 1)
           local offset     = redis.call('get', offset_key)
 
-          if offset and offset != 0 then
+          if offset and offset ~= 0 then
             redis.call('del', offset_key)
             redis.call('ltrim', queue, offset, -1)
           end
