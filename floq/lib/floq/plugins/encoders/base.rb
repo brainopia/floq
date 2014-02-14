@@ -19,6 +19,11 @@ class Floq::Plugins::Encoders::Base
     [decode(result), offset] if result
   end
 
+  def recover(queue)
+    result, offset = @adapter.recover queue
+    [decode(result), offset] if result
+  end
+
   def read(*args)
     (@adapter.read(*args) || []).map &method(:decode)
   end
