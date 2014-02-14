@@ -36,6 +36,7 @@ class Floq::Provider
 
   def reset!(type)
     @plugins[type.to_sym] = nil
+    reset_chain
     self
   end
 
