@@ -46,6 +46,9 @@ class Floq::Plugins::Adapters::Memory
     end
   end
 
+  def recover_and_skip(queue)
+  end
+
   def confirm(queue, offset)
     confirms[queue] << offset
   end

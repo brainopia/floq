@@ -1,12 +1,29 @@
 class Floq::Plugins::Pullers::Parallel
   include Floq::Plugins::Base
 
+  def initialize(*)
+    super
+    recovered = {}
+  end
+
   def pull(queue)
-    message, offset = @adapter.peek_and_skip queue
-    if message
-      yield message
-      @adapter.confirm queue, offset
-      message
+    if recovered[queue]
+      message, offset = @adapter.peek_and_skip queue
+      if message
+        yield message
+        @adapter.confirm queue, offset
+        message
+      end
+    else
+      message, offset = @adapter.recover_and_skip queue
+      if message
+        yield message
+        @adapter.confirm queue, offset
+        message
+      else
+        recovered[queue] = true
+        pull queue
+      end
     end
   end
 
