@@ -175,7 +175,7 @@ class Floq::Plugins::Adapters::Redis
 
               redis.call('set', recover_key, 0)
               redis.call('set', offset_key, offset - deletedConfirmations)
-              redis.call('set', string.sub(confirms, cursor, -1))
+              redis.call('set', confirm_key, string.sub(confirms, cursor, -1))
               redis.call('ltrim', queue, deletedConfirmations, -1)
             end
           end
