@@ -5,7 +5,8 @@ module Floq::Plugins::Base
     @adapter = provider or raise ArgumentError
   end
 
-  def method_missing(method, queue, *args, &block)
+  def method_missing(method, queue=nil, *args, &block)
+    raise NoMethodError, method unless queue
     @adapter.send method, queue, *args, &block
   end
 end
