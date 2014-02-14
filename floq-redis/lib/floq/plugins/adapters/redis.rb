@@ -170,10 +170,11 @@ class Floq::Plugins::Adapters::Redis
               end
             end
 
+            redis.call('set', recover_key, 0)
+
             if cursor > 1 then
               local deletedConfirmations = (cursor-1)*8
 
-              redis.call('set', recover_key, 0)
               redis.call('set', offset_key, offset - deletedConfirmations)
               redis.call('set', confirm_key, string.sub(confirms, cursor, -1))
               redis.call('ltrim', queue, deletedConfirmations, -1)
