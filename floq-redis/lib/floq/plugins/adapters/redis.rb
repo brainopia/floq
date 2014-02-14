@@ -91,7 +91,6 @@ class Floq::Plugins::Adapters::Redis
           local recover_offset = redis.call('get', recover_key) or 0
           local recover_byte   = math.floor(recover_offset / 8)
           local recover_bit    = recover_offset - recover_byte * 8
-          local bit_values     = { 0, 1, 3, 7, 15, 31, 63, 127 }
           local position
           local byte
 
@@ -99,7 +98,7 @@ class Floq::Plugins::Adapters::Redis
             byte = string.byte(confirms, byte_index + 1)
 
             for bit_index=recover_bit, 7 do
-              if byte == bit_values[bit_index + 1] then
+              if byte % 2^(bit_index+1) < 2^bit_index then
                 position = byte_index*8 + bit_index
                 break
               end
