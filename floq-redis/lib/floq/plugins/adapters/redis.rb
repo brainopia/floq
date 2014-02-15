@@ -98,7 +98,7 @@ class Floq::Plugins::Adapters::Redis
             byte = string.byte(confirms, byte_index + 1)
 
             for bit_index=recover_bit, 7 do
-              if byte % 2^(bit_index+1) < 2^bit_index then
+              if byte % 2^(7-bit_index+1) < 2^(7-bit_index) then
                 position = byte_index*8 + bit_index
                 break
               end
