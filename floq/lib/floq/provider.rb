@@ -5,8 +5,8 @@ class Floq::Provider
   def self.default
     @default ||= new.tap do |it|
       it.use! :puller,  :parallel
-      it.use! :rescuer, :delayed_retry
-      it.use! :encoder,   :marshal
+      it.use! :rescuer, :simple
+      it.use! :encoder, :marshal
     end
   end
 

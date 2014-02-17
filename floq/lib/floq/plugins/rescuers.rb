@@ -1,3 +1,3 @@
 module Floq::Plugins::Rescuers
-  require_relative 'rescuers/delayed_retry'
+  require_relative 'rescuers/simple'
 end

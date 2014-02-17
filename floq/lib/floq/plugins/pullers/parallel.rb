@@ -25,6 +25,8 @@ class Floq::Plugins::Pullers::Parallel
         pull(queue) {|message| yield message }
       end
     end
+  rescue
+    @recovered[queue] = false
   end
 
   def splittable?(_)
