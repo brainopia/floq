@@ -101,17 +101,18 @@ class Floq::Plugins::Adapters::Redis
   def peek_and_skip(queue)
     pool.with do |client|
       # TODO: evalsha
-      client.eval <<-LUA, argv: [queue.to_s, offset_key(queue)]
+      client.eval <<-LUA, argv: [queue.to_s, offset_key(queue), offset_base_key(queue)]
         local queue      = table.remove(ARGV, 1)
         local offset_key = table.remove(ARGV, 1)
+        local base_key   = table.remove(ARGV, 1)
         local offset     = redis.call('get', offset_key) or 0
         local message    = redis.call('lindex', queue, offset)
 
         if message then
+          local base = redis.call('get', base_key) or 0
           redis.call('incr', offset_key)
+          return { message, tonumber(base) + tonumber(offset) }
         end
-
-        return { message, tonumber(offset) }
       LUA
     end
   end
@@ -120,8 +121,9 @@ class Floq::Plugins::Adapters::Redis
     pool.with do |client|
       # TODO: evalsha
       # fix this awful code
-      client.eval <<-LUA, argv: [queue.to_s, recover_offset_key(queue), confirm_key(queue)]
+      client.eval <<-LUA, argv: [queue.to_s, offset_base_key(queue), recover_offset_key(queue), confirm_key(queue)]
         local queue       = table.remove(ARGV, 1)
+        local base_key    = table.remove(ARGV, 1)
         local recover_key = table.remove(ARGV, 1)
         local confirm_key = table.remove(ARGV, 1)
         local confirms    = redis.call('get', confirm_key)
@@ -152,8 +154,10 @@ class Floq::Plugins::Adapters::Redis
 
           if position then
             local message = redis.call('lindex', queue, position)
+            local base = redis.call('get', base_key)
+
             redis.call('set', recover_key, position + 1)
-            return { message, tonumber(position) }
+            return { message, tonumber(base) + tonumber(position) }
           end
         end
       LUA
