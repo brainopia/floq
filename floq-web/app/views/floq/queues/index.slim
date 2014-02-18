@@ -17,7 +17,7 @@ table.ui.table.segment@queues
         td
           = count
         td
-          = offset
+          #{dirty_offset} / #{offset}
         td
           .small.ui.icon.buttons
             a.ui.button[href=queue_path(queue.label)
