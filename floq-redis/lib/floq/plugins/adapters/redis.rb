@@ -68,7 +68,7 @@ class Floq::Plugins::Adapters::Redis
         local base_key   = table.remove(ARGV, 1)
         local offset_key = table.remove(ARGV, 1)
         local value      = tonumber(table.remove(ARGV, 1))
-        local base       = redis.call('get', base_key) or 0
+        local base       = tonumber(redis.call('get', base_key) or 0)
 
         if value < base then
           return { err = "Value is less than offset base" }
@@ -166,7 +166,7 @@ class Floq::Plugins::Adapters::Redis
         local confirm_key = table.remove(ARGV, 1)
         local base_key    = table.remove(ARGV, 1)
         local offset      = tonumber(table.remove(ARGV, 1))
-        local base        = redis.call('get', base_key) or 0
+        local base        = tonumber(redis.call('get', base_key) or 0)
 
         if base <= offset then
           redis.call('setbit', confirm_key, offset - base, 1)
