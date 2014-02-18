@@ -7,9 +7,9 @@ table.ui.table.segment@queues
       th Actions
   tbody
     - @queues.each do |queue|
-      - count  = queue.count
-      - offset = queue.offset
-      - next if count.zero? and offset.zero?
+      - count = queue.count
+      - dirty_offset = queue.dirty_offset
+      - next if count.zero? and dirty_offset.zero?
       tr
         td
           a href=queue_path(queue.label)
@@ -17,7 +17,7 @@ table.ui.table.segment@queues
         td
           = count
         td
-          #{dirty_offset} / #{offset}
+          #{dirty_offset} / #{queue.offset}
         td
           .small.ui.icon.buttons
             a.ui.button[href=queue_path(queue.label)
