@@ -7,7 +7,7 @@ class Floq::Plugins::Adapters::Redis
 
   def peek(queue)
     pool.with do |client|
-      client.lindex queue, offset(queue)
+      client.lindex queue, dirty_offset(queue)
     end
   end
 
@@ -22,6 +22,7 @@ class Floq::Plugins::Adapters::Redis
       client.multi do
         client.del queue
         client.del offset_key(queue)
+        client.del offset_base_key(queue)
         client.del recover_offset_key(queue)
         client.del confirm_key(queue)
       end
@@ -35,13 +36,27 @@ class Floq::Plugins::Adapters::Redis
     end
   end
 
+  # TODO: support confirmations
   def skip_all(queue)
     pool.with do |client|
-      client.set offset_key(queue), total(queue)
+      client.set offset_key(queue), dirty_total(queue)
     end
   end
 
   def offset(queue)
+    pool.with do |client|
+      client.eval <<-LUA, argv: [offset_base_key(queue), offset_key(queue)]
+        local base_key   = table.remove(ARGV, 1)
+        local offset_key = table.remove(ARGV, 1)
+        local base       = redis.call('get', base_key) or 0
+        local offset     = redis.call('get', offset_key) or 0
+
+        return tonumber(base) + tonumber(offset)
+      LUA
+    end
+  end
+
+  def dirty_offset(queue)
     pool.with do |client|
       client.get(offset_key queue).to_i
     end
@@ -49,11 +64,35 @@ class Floq::Plugins::Adapters::Redis
 
   def offset!(queue, value)
     pool.with do |client|
-      client.set offset_key(queue), value
+      client.eval <<-LUA, argv: [offset_base_key(queue), offset_key(queue), value]
+        local base_key   = table.remove(ARGV, 1)
+        local offset_key = table.remove(ARGV, 1)
+        local value      = tonumber(table.remove(ARGV, 1))
+        local base       = redis.call('get', base_key) or 0
+
+        if value < base then
+          return { err = "Value is less than offset base" }
+        else
+          redis.call('set', offset_key, value - base)
+        end
+      LUA
     end
   end
 
   def total(queue)
+    pool.with do |client|
+      client.eval <<-LUA, argv: [queue, offset_base_key(queue)]
+        local queue    = table.remove(ARGV, 1)
+        local base_key = table.remove(ARGV, 1)
+        local tasks    = redis.call('llen', queue)
+        local base     = redis.call('get', base_key) or 0
+
+        return tasks + tonumber(base)
+      LUA
+    end
+  end
+
+  def dirty_total(queue)
     pool.with do |client|
       client.llen queue
     end
@@ -123,10 +162,20 @@ class Floq::Plugins::Adapters::Redis
 
   def confirm(queue, offset)
     pool.with do |client|
-      client.setbit confirm_key(queue), offset, 1
+      client.eval <<-LUA, argv: [confirm_key(queue), offset_base_key(queue), offset]
+        local confirm_key = table.remove(ARGV, 1)
+        local base_key    = table.remove(ARGV, 1)
+        local offset      = tonumber(table.remove(ARGV, 1))
+        local base        = redis.call('get', base_key) or 0
+
+        if base <= offset then
+          redis.call('setbit', confirm_key, offset - base, 1)
+        end
+      LUA
     end
   end
 
+  # TODO: take into account offset_base
   def read(queue, from, count)
     pool.with do |client|
       client.lrange queue, from, from + count - 1
@@ -137,13 +186,15 @@ class Floq::Plugins::Adapters::Redis
     case type
     when :singular
       pool.with do |client|
-        client.eval <<-LUA, argv: [queue.to_s, offset_key(queue)]
+        client.eval <<-LUA, argv: [queue.to_s, offset_key(queue), offset_base_key(queue)]
           local queue      = table.remove(ARGV, 1)
           local offset_key = table.remove(ARGV, 1)
+          local base_key   = table.remove(ARGV, 1)
           local offset     = redis.call('get', offset_key)
 
           if offset and offset ~= 0 then
             redis.call('del', offset_key)
+            redis.call('incrby', base_key, offset)
             redis.call('ltrim', queue, offset, -1)
           end
         LUA
@@ -152,9 +203,10 @@ class Floq::Plugins::Adapters::Redis
       pool.with do |client|
         # TODO: evalsha
         # fix this awful code
-        client.eval <<-LUA, argv: [queue.to_s, offset_key(queue), recover_offset_key(queue), confirm_key(queue)]
+        client.eval <<-LUA, argv: [queue.to_s, offset_key(queue), offset_base_key(queue), recover_offset_key(queue), confirm_key(queue)]
           local queue       = table.remove(ARGV, 1)
           local offset_key  = table.remove(ARGV, 1)
+          local base_key    = table.remove(ARGV, 1)
           local recover_key = table.remove(ARGV, 1)
           local confirm_key = table.remove(ARGV, 1)
           local offset      = redis.call('get', offset_key)
@@ -175,6 +227,7 @@ class Floq::Plugins::Adapters::Redis
             if cursor > 1 then
               local deletedConfirmations = (cursor-1)*8
 
+              redis.call('incrby', base_key, deletedConfirmations)
               redis.call('set', offset_key, offset - deletedConfirmations)
               redis.call('set', confirm_key, string.sub(confirms, cursor, -1))
               redis.call('ltrim', queue, deletedConfirmations, -1)
@@ -197,6 +250,10 @@ class Floq::Plugins::Adapters::Redis
 
   def confirm_key(queue)
     "#{queue}-confirm"
+  end
+
+  def offset_base_key(queue)
+    "#{queue}-offset-base"
   end
 
   def new_pool(settings)
