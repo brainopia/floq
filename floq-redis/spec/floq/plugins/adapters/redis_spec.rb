@@ -37,7 +37,7 @@ describe Floq::Plugins::Adapters::Redis do
     end
 
     it 'peek_and_skip' do
-      subject.peek_and_skip(queue).should == [nil, 0]
+      subject.peek_and_skip(queue).should_not be
       subject.offset(queue).should == 0
     end
   end
