@@ -47,7 +47,7 @@ class Floq::Schedulers::Base
     Thread.new do
       loop do
         queues.each(&:cleanup)
-        sleep CLEANUP_PERIOD
+        sleep CLEANUP_PERIOD + rand(CLEANUP_PERIOD / 10)
       end
     end
   end
