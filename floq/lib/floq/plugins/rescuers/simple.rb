@@ -10,5 +10,6 @@ class Floq::Plugins::Rescuers::Simple
     @adapter.pull queue, &block
   rescue
     @callback.call queue, $! if @callback
+    false
   end
 end
