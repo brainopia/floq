@@ -154,7 +154,7 @@ class Floq::Plugins::Adapters::Redis
 
           if position then
             local message = redis.call('lindex', queue, position)
-            local base = redis.call('get', base_key)
+            local base = redis.call('get', base_key) || 0
 
             redis.call('set', recover_key, position + 1)
             return { message, tonumber(base) + tonumber(position) }
