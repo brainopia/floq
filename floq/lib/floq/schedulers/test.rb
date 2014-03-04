@@ -19,13 +19,18 @@ class Floq::Schedulers::Test < Floq::Schedulers::Base
 
   def run
     check_handler
-    
-    while queue = pushed_queues.shift
+
+    while queue = next_queue!
       queue.pull_and_handle
     end
   end
 
   private
+
+  def next_queue!
+    pushed_queues.shuffle! if options[:random]
+    pushed_queues.shift
+  end
 
   def make_queues_testable
     scheduler = self
