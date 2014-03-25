@@ -18,6 +18,7 @@ class Floq::Provider
   def hierarchy
     @plugins.values_at(
       :adapter,
+      :batcher,
       :encoder,
       :puller,
       :logger,
