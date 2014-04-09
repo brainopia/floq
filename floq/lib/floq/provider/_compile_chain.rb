@@ -10,7 +10,7 @@ class Floq::Provider
   end
 
   def compile
-    raise unless valid?
+    raise 'invalid provider' unless valid?
     hierarchy.inject do |app, middleware|
       middleware.call app
     end
