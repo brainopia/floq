@@ -7,9 +7,13 @@ class Floq::Plugins::Adapters::Redis
   end
 
   def peek(queue)
-    pool.with do |client|
-      client.lindex queue, dirty_offset(queue)
-    end
+    redis_eval <<-LUA, [queue, offset_key(queue)]
+      local queue      = table.remove(ARGV, 1)
+      local offset_key = table.remove(ARGV, 1)
+      local offset     = redis.call('get', offset_key) or 0
+
+      return redis.call('lindex', queue, tonumber(offset))
+    LUA
   end
 
   def push(queue, message)
