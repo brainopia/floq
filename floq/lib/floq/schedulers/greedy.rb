@@ -1,4 +1,6 @@
 class Floq::Schedulers::Greedy < Floq::Schedulers::Base
+  require_relative 'greedy/pool'
+
   MAX_DELAY = 5
   HISTORY_SIZE = 3
 
@@ -23,11 +25,17 @@ class Floq::Schedulers::Greedy < Floq::Schedulers::Base
   def run
     check_handler
     start_cleanup_thread
+
+    pool = Pool.new options.fetch(:pool, 20)
     queues.each do |queue|
-      Thread.new do
-        wrapper = Wrapper.new queue
-        loop { wrapper.pull_and_handle }
+      wrapper = Wrapper.new queue
+      processor = -> do
+        pool.process do
+          wrapper.pull_and_handle
+          processor.call
+        end
       end
+      processor.call
     end
     sleep
   end
