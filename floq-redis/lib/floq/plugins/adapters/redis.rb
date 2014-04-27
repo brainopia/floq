@@ -1,8 +1,8 @@
 class Floq::Plugins::Adapters::Redis
-  attr_reader :pool
+  attr_reader :settings
 
   def initialize(settings={})
-    @pool = new_pool settings.dup
+    @settings = settings
     @digests = {}
   end
 
@@ -17,35 +17,27 @@ class Floq::Plugins::Adapters::Redis
   end
 
   def push(queue, message)
-    pool.with do |client|
-      client.rpush queue, message
-    end
+    client.rpush queue, message
   end
 
   def drop(queue)
-    pool.with do |client|
-      client.multi do
-        client.del queue
-        client.del offset_key(queue)
-        client.del offset_base_key(queue)
-        client.del recover_offset_key(queue)
-        client.del confirm_key(queue)
-      end
+    client.multi do
+      client.del queue
+      client.del offset_key(queue)
+      client.del offset_base_key(queue)
+      client.del recover_offset_key(queue)
+      client.del confirm_key(queue)
     end
   end
 
   def skip(queue)
-    pool.with do |client|
-      # TODO: use hincrby
-      client.incr offset_key(queue)
-    end
+    # TODO: use hincrby
+    client.incr offset_key(queue)
   end
 
   # TODO: support confirmations
   def skip_all(queue)
-    pool.with do |client|
-      client.set offset_key(queue), dirty_total(queue)
-    end
+    client.set offset_key(queue), dirty_total(queue)
   end
 
   def offset(queue)
@@ -60,9 +52,7 @@ class Floq::Plugins::Adapters::Redis
   end
 
   def dirty_offset(queue)
-    pool.with do |client|
-      client.get(offset_key queue).to_i
-    end
+    client.get(offset_key queue).to_i
   end
 
   def offset!(queue, value)
@@ -92,9 +82,7 @@ class Floq::Plugins::Adapters::Redis
   end
 
   def dirty_total(queue)
-    pool.with do |client|
-      client.llen queue
-    end
+    client.llen queue
   end
 
   def peek_and_skip(queue)
@@ -172,9 +160,7 @@ class Floq::Plugins::Adapters::Redis
 
   # TODO: take into account offset_base
   def read(queue, from, count)
-    pool.with do |client|
-      client.lrange queue, from, from + count - 1
-    end
+    client.lrange queue, from, from + count - 1
   end
 
   def cleanup(queue, type=:default)
@@ -246,25 +232,17 @@ class Floq::Plugins::Adapters::Redis
     "#{queue}-offset-base"
   end
 
-  def new_pool(settings)
-    pool_settings = settings.delete(:pool) || {}
-    pool_settings[:size]    ||= 10
-    pool_settings[:timeout] ||= 5
-
-    ConnectionPool.new pool_settings do
-      Redis.new settings
-    end
+  def client
+    Thread.current[:floq_redis_client] ||= Redis.new settings
   end
 
   def redis_eval(script, args)
-    pool.with do |client|
-      begin
-        @digests[script] ||= Digest::SHA1.hexdigest script
-        client.evalsha @digests[script], argv: args
-      rescue Redis::CommandError => error
-        raise unless error.message.include? 'NOSCRIPT'
-        client.eval script, argv: args
-      end
+    begin
+      @digests[script] ||= Digest::SHA1.hexdigest script
+      client.evalsha @digests[script], argv: args
+    rescue Redis::CommandError => error
+      raise unless error.message.include? 'NOSCRIPT'
+      client.eval script, argv: args
     end
   end
 end

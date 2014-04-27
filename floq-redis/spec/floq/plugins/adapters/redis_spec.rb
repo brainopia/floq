@@ -75,9 +75,7 @@ describe Floq::Plugins::Adapters::Redis do
     it 'confirm' do
       subject.confirm(queue, 1)
       confirm_key = subject.send(:confirm_key, queue)
-      subject.pool.with do |client|
-        client.getbit(confirm_key, 1).should == 1
-      end
+      subject.send(:client).getbit(confirm_key, 1).should == 1
     end
 
     it 'peek_and_skip' do
