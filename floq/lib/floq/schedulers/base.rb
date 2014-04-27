@@ -46,8 +46,11 @@ class Floq::Schedulers::Base
   def start_cleanup_thread
     Thread.new do
       loop do
-        queues.each(&:cleanup)
-        sleep CLEANUP_PERIOD + rand(CLEANUP_PERIOD / 10)
+        begin
+          queues.each(&:cleanup)
+          sleep CLEANUP_PERIOD + rand(CLEANUP_PERIOD / 10)
+        rescue Timeout::Error
+        end
       end
     end
   end
