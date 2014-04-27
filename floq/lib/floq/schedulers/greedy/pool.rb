@@ -1,4 +1,4 @@
-class Floq::Pool
+class Floq::Schedulers::Greedy::Pool
   def initialize(number)
     @queue = Queue.new
 
