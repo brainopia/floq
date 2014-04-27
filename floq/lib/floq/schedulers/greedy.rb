@@ -11,12 +11,20 @@ class Floq::Schedulers::Greedy < Floq::Schedulers::Base
     end
 
     def pull_and_handle
+      if @wait
+        if Time.now < @wait
+          return
+        else
+          @wait = nil
+        end
+      end
+
       @status.shift
       pulled_status = @queue.pull_and_handle
       @status.push pulled_status
       missed_times = @status.count(false)
       if missed_times > 0
-        sleep MAX_DELAY * missed_times.to_f / HISTORY_SIZE
+        @wait = Time.now + MAX_DELAY * missed_times.to_f / HISTORY_SIZE
       end
       pulled_status
     end
