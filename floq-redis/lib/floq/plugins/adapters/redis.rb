@@ -166,7 +166,7 @@ class Floq::Plugins::Adapters::Redis
       local from       = tonumber(table.remove(ARGV, 1)) - base
       local count      = tonumber(table.remove(ARGV, 1))
 
-      redis.call('lrange', queue, from, from + count - 1)
+      return redis.call('lrange', queue, from, from + count - 1)
     LUA
   end
 
