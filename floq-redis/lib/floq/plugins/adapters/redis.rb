@@ -158,9 +158,16 @@ class Floq::Plugins::Adapters::Redis
     LUA
   end
 
-  # TODO: take into account offset_base
   def read(queue, from, count)
-    client.lrange queue, from, from + count - 1
+    redis_eval <<-LUA, [queue.to_s, offset_base_key(queue), from, count]
+      local queue      = table.remove(ARGV, 1)
+      local base_key   = table.remove(ARGV, 1)
+      local base       = tonumber(redis.call('get', base_key) or 0)
+      local from       = tonumber(table.remove(ARGV, 1)) - base
+      local count      = tonumber(table.remove(ARGV, 1))
+
+      redis.call('lrange', queue, from, from + count - 1)
+    LUA
   end
 
   def cleanup(queue, type=:default)
