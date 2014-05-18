@@ -1,4 +1,4 @@
-class Floq::Plugins::Adapters::Memory
+class Floq::Plugins::Storages::Memory
   attr_reader :messages, :offsets, :confirms
 
   def initialize

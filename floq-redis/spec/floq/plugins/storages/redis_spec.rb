@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Floq::Plugins::Adapters::Redis do
+describe Floq::Plugins::Storages::Redis do
   let(:queue) { :test_queue }
 
   before do

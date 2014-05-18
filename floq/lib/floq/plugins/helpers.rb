@@ -7,11 +7,11 @@ class Floq::Plugins::Helpers
   end
 
   def count(queue)
-    @adapter.total(queue) - @adapter.offset(queue)
+    @base.total(queue) - @base.offset(queue)
   end
 
   def peek_read(queue, count=10)
-    @adapter.read queue, @adapter.offset(queue), count
+    @base.read queue, @base.offset(queue), count
   end
 
   def handle(queue, &block)
@@ -33,7 +33,7 @@ class Floq::Plugins::Helpers
 
     pulled = false
 
-    @adapter.pull queue do |message|
+    @base.pull queue do |message|
       pulled = true
       block.call message
     end

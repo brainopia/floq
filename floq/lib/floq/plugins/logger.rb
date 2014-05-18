@@ -1,14 +1,14 @@
 class Floq::Plugins::Logger
   include Floq::Plugins::Base
 
-  def initialize(adapter, file)
+  def initialize(base, file)
     super
     @logger = file
     @logger.sync = true
   end
 
   def pull(queue, &block)
-    @adapter.pull queue do |message|
+    @base.pull queue do |message|
       log_around pre: 'pull', post: queue, payload: message do
         block.call message
       end
@@ -20,7 +20,7 @@ class Floq::Plugins::Logger
 
   def push(queue, data)
     log "push #{queue}", data
-    @adapter.push queue, data
+    @base.push queue, data
   end
 
   def log(message, *payload)

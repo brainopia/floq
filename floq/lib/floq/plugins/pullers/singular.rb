@@ -2,10 +2,10 @@ class Floq::Plugins::Pullers::Singular
   include Floq::Plugins::Base
 
   def pull(queue)
-    message = @adapter.peek queue
+    message = @base.peek queue
     if message
       yield message
-      @adapter.skip queue
+      @base.skip queue
       message
     end
   end
@@ -15,6 +15,6 @@ class Floq::Plugins::Pullers::Singular
   end
 
   def cleanup(queue)
-    @adapter.cleanup queue, :singular
+    @base.cleanup queue, :singular
   end
 end

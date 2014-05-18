@@ -2,11 +2,11 @@ class Floq::Plugins::Pullers::EventSourced
   include Floq::Plugins::Base
 
   def pull(queue)
-    yield @adapter.peek(queue)
+    yield @base.peek(queue)
   end
 
   def peek(queue)
-    events = @adapter.read queue, 0, 10_000
+    events = @base.read queue, 0, 10_000
     raise 'too much events' if events.size == 10_000
     merged = events.reduce {|total, event| total.merge event }
     merged.delete_if {|_, value| value.nil? }

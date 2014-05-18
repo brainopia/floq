@@ -8,17 +8,17 @@ class Floq::Plugins::Pullers::Parallel
 
   def pull(queue)
     if @recovered[queue]
-      message, offset = @adapter.peek_and_skip queue
+      message, offset = @base.peek_and_skip queue
       if message
         yield message
-        @adapter.confirm queue, offset
+        @base.confirm queue, offset
         message
       end
     else
-      message, offset = @adapter.recover queue
+      message, offset = @base.recover queue
       if message
         yield message
-        @adapter.confirm queue, offset
+        @base.confirm queue, offset
         message
       else
         @recovered[queue] = true
@@ -35,6 +35,6 @@ class Floq::Plugins::Pullers::Parallel
   end
 
   def cleanup(queue)
-    @adapter.cleanup queue, :parallel
+    @base.cleanup queue, :parallel
   end
 end

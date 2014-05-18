@@ -1,7 +1,7 @@
 class Floq::Plugins::Batcher
   incldue Floq::Plugins::Base
 
-  def initialize(provider, size=200)
+  def initialize(base, size=200)
     super
     @size = size
     @cache = Hash.new {|h,k| h[k] = [] }
@@ -16,7 +16,7 @@ class Floq::Plugins::Batcher
     message = @cache[queue].first
     return message if message
 
-    @cache[queue] = @adapter.peek_batch queue, @size
+    @cache[queue] = @base.peek_batch queue, @size
     @cache[queue].first
   end
 
@@ -25,7 +25,7 @@ class Floq::Plugins::Batcher
       message = @cache[queue].shift
       return message if message
 
-      @cache[queue] = @adapter.peek_and_skip_batch queue, @size
+      @cache[queue] = @base.peek_and_skip_batch queue, @size
       @cache[queue].shift
     end
   end

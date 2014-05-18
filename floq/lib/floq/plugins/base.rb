@@ -1,12 +1,12 @@
 module Floq::Plugins::Base
-  attr_reader :adapter
+  attr_reader :base
 
-  def initialize(provider, *args)
-    @adapter = provider or raise ArgumentError
+  def initialize(base, *args)
+    @base = base or raise ArgumentError
   end
 
   def method_missing(method, queue=nil, *args, &block)
     raise NoMethodError, method unless queue
-    @adapter.send method, queue, *args, &block
+    @base.send method, queue, *args, &block
   end
 end

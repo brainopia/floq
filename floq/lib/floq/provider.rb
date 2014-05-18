@@ -17,7 +17,7 @@ class Floq::Provider
 
   def hierarchy
     @plugins.values_at(
-      :adapter,
+      :storage,
       :batcher,
       :encoder,
       :puller,
@@ -28,7 +28,7 @@ class Floq::Provider
   end
 
   def valid?
-    @plugins.values_at(:adapter, :encoder, :puller).all?
+    @plugins.values_at(:storage, :encoder, :puller).all?
   end
 
   def get(type)
@@ -52,10 +52,10 @@ class Floq::Provider
   end
 
   def wrap(type, target, *args)
-    set type, if type == :adapter
+    set type, if type == :storage
       target.new *args
     else
-      ->(adapter) { target.new adapter, *args }
+      ->(base) { target.new base, *args }
     end
   end
 end

@@ -1,4 +1,4 @@
-class Floq::Plugins::Adapters::Redis
+class Floq::Plugins::Storages::Redis
   attr_reader :settings
 
   def initialize(settings={})
